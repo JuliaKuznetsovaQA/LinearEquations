@@ -29,6 +29,7 @@ namespace LinearEquationsVar
 
         static int line_count = 0;
         static int var_count = 0;
+        public static bool flagIncompatible = false;
 
 
         // Очистка формы.
@@ -52,6 +53,7 @@ namespace LinearEquationsVar
             a = 0;
             b = 0;
             c = 0;
+            flagIncompatible = false;
         }
 
        
@@ -85,7 +87,6 @@ namespace LinearEquationsVar
             vars[11] = D3;
 
 
-
             // Проверка на строки вида ( 0...0 | d ), где d != 0.
             void IsIncompatible(int line_number)
             {
@@ -105,17 +106,19 @@ namespace LinearEquationsVar
                         {
                             textBox_answer.Text = "Система несовместна и не имеет решений.";
                             MessageBox.Show("Система несовместна и не имеет решений.");
-                            return;
+                            flagIncompatible = true;
                         }
                     }
                 }
             }
 
-            for (int i = 1; i < 4; i++)
-            {
-                IsIncompatible(i);
-            }
 
+            for (int i = 1; i < 4; i++)
+                {
+                    IsIncompatible(i);
+                }
+            
+            
 
             // Проверка на нулевые строки
             bool IsLineNull(int line_number)
@@ -175,68 +178,71 @@ namespace LinearEquationsVar
                         }
                 }
             }
-
-
-            // Проверяем на нулевые строки
-            if (IsLineNull(1))
+            if (!flagIncompatible)
             {
-                // Если 1-я строка нулевая, а 3-я нет - меняем строки местами.
-                if (IsLineNull(3) == false)
+                // Проверяем на нулевые строки
+                if (IsLineNull(1))
                 {
-                    Change_Lines(1, 3);
-                }
-                // Если и 1-я и 3-я строки нулевые, проверяем 2-ю строку.
-                else if (IsLineNull(3))
-                {
-                    // Если 2-я строка ненулевая, меняем местами 1-ю и 2-ю строки.
-                    if (IsLineNull(2) == false)
-                    {
-                        Change_Lines(1, 2);
-                    }
-                    // Если все 3 строки нулевые, система имеет бесконечное множество решений.
-                    else if (IsLineNull(2))
-                    {
-                        textBox_answer.Text = "Система имеет бесконечное множество решений.";
-                        return;
-                    }
-
-                }
-            }
-            // Если 1-я строка ненулевая, а 2-я нулевая - поменяем местами 2-ю и 3-ю строки.
-            else if (IsLineNull(2))
-            {
-                Change_Lines(2, 3);
-            }
-
-            // Если первый коэффициент в 1-й строке равен 0, ищем строку с ненулевым коэффициентом
-            // и меняем их местами
-            if (A1.Value == 0)
-            {
-                if (A2.Value != 0)
-                {
-                    Change_Lines(1, 2);
-                }
-                else if (A3.Value != 0)
-                {
-                    Change_Lines(1, 3);
-                }
-                // Если все первые коэффициенты нулевые, переходим к анализу вторых коэффициентов.
-                else if (A1.Value == 0 && A2.Value == 0 && A3.Value == 0 && B1.Value == 0)
-                {
-                    // Если во 2-й строке второй коэффициент не равен нулю,
-                    // меняем 1-ю и 2-ю строку
-                    if (B2.Value != 0)
-                    {
-                        Change_Lines(1, 2);
-                    }
-                    // Если в первых двух строках первые 2 коэффициента нулевые, а в 3-й строке 
-                    // второй коэффициент ненулевой, меняем местами 1-ю и 3-ю строки
-                    else if (B3.Value != 0)
+                    // Если 1-я строка нулевая, а 3-я нет - меняем строки местами.
+                    if (IsLineNull(3) == false)
                     {
                         Change_Lines(1, 3);
                     }
+                    // Если и 1-я и 3-я строки нулевые, проверяем 2-ю строку.
+                    else if (IsLineNull(3))
+                    {
+                        // Если 2-я строка ненулевая, меняем местами 1-ю и 2-ю строки.
+                        if (IsLineNull(2) == false)
+                        {
+                            Change_Lines(1, 2);
+                        }
+                        // Если все 3 строки нулевые, система имеет бесконечное множество решений.
+                        else if (IsLineNull(2))
+                        {
+                            textBox_answer.Text = "Система имеет бесконечное множество решений.";
+                            flagIncompatible = true;
+                        }
+
+                    }
+                }
+                // Если 1-я строка ненулевая, а 2-я нулевая - поменяем местами 2-ю и 3-ю строки.
+                else if (IsLineNull(2))
+                {
+                    Change_Lines(2, 3);
+                }
+
+                // Если первый коэффициент в 1-й строке равен 0, ищем строку с ненулевым коэффициентом
+                // и меняем их местами
+                if (A1.Value == 0)
+                {
+                    if (A2.Value != 0)
+                    {
+                        Change_Lines(1, 2);
+                    }
+                    else if (A3.Value != 0)
+                    {
+                        Change_Lines(1, 3);
+                    }
+                    // Если все первые коэффициенты нулевые, переходим к анализу вторых коэффициентов.
+                    else if (A1.Value == 0 && A2.Value == 0 && A3.Value == 0 && B1.Value == 0)
+                    {
+                        // Если во 2-й строке второй коэффициент не равен нулю,
+                        // меняем 1-ю и 2-ю строку
+                        if (B2.Value != 0)
+                        {
+                            Change_Lines(1, 2);
+                        }
+                        // Если в первых двух строках первые 2 коэффициента нулевые, а в 3-й строке 
+                        // второй коэффициент ненулевой, меняем местами 1-ю и 3-ю строки
+                        else if (B3.Value != 0)
+                        {
+                            Change_Lines(1, 3);
+                        }
+                    }
                 }
             }
+
+            
 
             // Начинаем преобразования строк.
             void Transform_Lines(int line_number1, int line_number2, double x)
@@ -320,44 +326,82 @@ namespace LinearEquationsVar
             }
 
             // Если переменных больше, чем строк, система либо несовместна, либо имеет бесконечно много решений
-            if (var_count > line_count)
+            if (!flagIncompatible)
             {
-                textBox_answer.Text = "строк: " + line_count + ", переменных: " + var_count + ". Система либо несовместна, либо имеет бесконечно много решений.";
-                return;
-            }
-
-            // Вычисляем c:
-            if (C3.Value != 0)
-            {
-                c = D3.Value / C3.Value;
-            }
-            else
-            {
-                c = 0;
-            }
-
-            // Подставляем c во вторую строку и находим b:
-            if (B2.Value != 0)
-            {
-                b = (D2.Value - (C2.Value * c)) / B2.Value;
-            }
-            // Специально для случая матрицы из двух строк без коэффициентов а:
-            else if (B2.Value == 0)
-            {
-                c = D2.Value / C2.Value;
-                // В первую строку подставляем с и находим b:
-                b = (D1.Value - C1.Value * c) / B1.Value;
-            }
-
-            // Подставляем b и c в первую строку и находим a:
-            if (A1.Value != 0)
-            {
-                a = (D1.Value - B1.Value * b - C1.Value * c) / A1.Value;
+                if (var_count > line_count)
+                {
+                    textBox_answer.Text = "строк: " + line_count + ", переменных: " + var_count + ". Система либо несовместна, либо имеет бесконечно много решений.";
+                    flagIncompatible = true;
+                }
             }
 
 
-            // Возвращаем результат:
-            textBox_answer.Text += "a = " + a + ", b = " + b + ", c = " + c;
+            // Если система совместна, начинаем вычисления.
+            if (!flagIncompatible)
+            {
+                // Если одно уравнение:
+                if (line_count == 1)
+                {
+                    foreach (var item in vars)
+                    {
+                        if (A1.Value != 0)
+                        {
+                            a = D1.Value / A1.Value;
+                            textBox_answer.Text += "a = " + a;
+                        }
+                        else if (B1.Value != 0)
+                        {
+                            b = D1.Value / B1.Value;
+                            textBox_answer.Text += "b = " + b;
+                        }
+                        else if (C1.Value != 0)
+                        {
+                            c = D1.Value / C1.Value;
+                            textBox_answer.Text += "c = " + c;
+                        }
+                    }
+                }
+
+                // Если 2 уравнения:
+                else if (line_count == 2)
+                {
+                    foreach (var item in vars)
+                    {
+                        textBox_answer.Text += "\n" + item.Name + " = " + item.Value;
+                    }
+                }
+
+
+                
+                // Если 3 уравнения:
+                // Вычисляем c:
+                if (C3.Value != 0)
+                {
+                    c = D3.Value / C3.Value;
+                }
+                else
+                {
+                    c = 0;
+                }
+
+                // Подставляем c во вторую строку и находим b:
+                if (B2.Value != 0)
+                {
+                    b = (D2.Value - (C2.Value * c)) / B2.Value;
+                }
+                
+
+                // Подставляем b и c в первую строку и находим a:
+                if (A1.Value != 0)
+                {
+                    a = (D1.Value - B1.Value * b - C1.Value * c) / A1.Value;
+                }
+
+
+                // Возвращаем результат:
+                textBox_answer.Text += "a = " + a + ", b = " + b + ", c = " + c;
+            }
+            
         }
 
     }

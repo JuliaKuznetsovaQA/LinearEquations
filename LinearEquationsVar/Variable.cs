@@ -81,6 +81,7 @@ namespace LinearEquationsVar
                     catch (Exception)
                     {
                         MessageBox.Show("Разрешен ввод только чисел");
+                        MainWindow.flagIncompatible = true;
                         return;
                     }
 
