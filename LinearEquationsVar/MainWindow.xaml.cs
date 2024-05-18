@@ -32,22 +32,21 @@ namespace LinearEquationsVar
         public static bool flagIncompatible = false;
 
 
+        
+
         // Очистка формы.
         private void clean_Click(object sender, RoutedEventArgs e)
         {
-            textBox_a1.Text = "";
-            textBox_b1.Text = "";
-            textBox_c1.Text = "";
-            textBox_d1.Text = "";
-            textBox_a2.Text = "";
-            textBox_b2.Text = "";
-            textBox_c2.Text = "";
-            textBox_d2.Text = "";
-            textBox_a3.Text = "";
-            textBox_b3.Text = "";
-            textBox_c3.Text = "";
-            textBox_d3.Text = "";
-            textBox_answer.Text = "";
+            TextBox[] textBoxes = {
+                textBox_a1, textBox_b1, textBox_c1, textBox_d1,
+                textBox_a2, textBox_b2, textBox_c2, textBox_d2,
+                textBox_a3, textBox_b3, textBox_c3, textBox_d3,
+                textBox_answer};
+            foreach (var textBox in textBoxes)
+            {
+                textBox.Text = "";
+            }
+            
             var_count = 0;
             line_count = 0;
             a = 0;
@@ -60,6 +59,22 @@ namespace LinearEquationsVar
         public void enter_Click(object sender, RoutedEventArgs e)
         {
             Variable[] vars = new Variable[12];
+
+            TextBox[] textBoxes = {
+                textBox_a1, textBox_b1, textBox_c1, textBox_d1,
+                textBox_a2, textBox_b2, textBox_c2, textBox_d2,
+                textBox_a3, textBox_b3, textBox_c3, textBox_d3};
+            foreach (var textBox in textBoxes)
+            {
+                try
+                {
+                    Convert.ToDouble(textBox.Text);
+                }
+                catch (Exception)
+                {
+                    textBox_answer.Text = "Разрешен ввод только чисел";
+                }
+            }
 
             Variable A1 = new Variable(textBox_a1.Text, "A1", 1, 1);
             vars[0] = A1;
@@ -86,6 +101,7 @@ namespace LinearEquationsVar
             Variable D3 = new Variable(textBox_d3.Text, "D3", 3, 4);
             vars[11] = D3;
 
+            
 
             // Проверка на строки вида ( 0...0 | d ), где d != 0.
             void IsIncompatible(int line_number)
@@ -112,12 +128,13 @@ namespace LinearEquationsVar
                 }
             }
 
+           
 
             for (int i = 1; i < 4; i++)
                 {
                     IsIncompatible(i);
                 }
-            
+
             
 
             // Проверка на нулевые строки
@@ -138,6 +155,7 @@ namespace LinearEquationsVar
                 else { return false; }
             }
 
+            // Проверка на нулевые переменные (столбцы)
             bool IsColumnNull(int column_number)
             {
                 int count = 0;
@@ -154,9 +172,8 @@ namespace LinearEquationsVar
                 }
                 else { return false; }
             }
-
-
-
+            
+            
             // Функция меняет строки значениями
             void Change_Lines(int line_number1, int line_number2) 
             {
@@ -178,7 +195,8 @@ namespace LinearEquationsVar
                         }
                 }
             }
-            if (!flagIncompatible)
+
+            if (flagIncompatible == false)
             {
                 // Проверяем на нулевые строки
                 if (IsLineNull(1))
@@ -199,7 +217,7 @@ namespace LinearEquationsVar
                         // Если все 3 строки нулевые, система имеет бесконечное множество решений.
                         else if (IsLineNull(2))
                         {
-                            textBox_answer.Text = "Система имеет бесконечное множество решений.";
+                            textBox_answer.Text += "Система имеет бесконечное множество решений.";
                             flagIncompatible = true;
                         }
 
@@ -240,109 +258,101 @@ namespace LinearEquationsVar
                         }
                     }
                 }
-            }
 
-            
-
-            // Начинаем преобразования строк.
-            void Transform_Lines(int line_number1, int line_number2, double x)
-            {
-                foreach (var item in vars)
-                {
-                    for (int i = 1; i < 5; i++)
-                        if (item.Line == line_number1 && item.Column == i)
-                        {
-                            foreach (var item1 in vars)
-                            {
-                                if (item1.Line == line_number2 && item1.Column == i)
-                                {
-                                    double tmp = item.Value + (item1.Value * x);
-                                    item.SetValue(tmp);
-                                }
-                            }
-                        }
-                }
-            }
-                        
-
-            // Начинаем с первого столбца второй строки. Здесь нужно получить 0.
-            // Ищем число x, на которое будем домножать 1-ю строку и прибавлять её ко 2-й строке.
-            // Преобразуем вторую строку:
-            if (A1.Value != 0 && A2.Value != 0)
-            {
-                double x = -A2.Value / A1.Value;
-                Transform_Lines(2, 1, x);
-            }
-            // Переходим к первому столбцу третьей строки.
-            if (A1.Value != 0 && A3.Value != 0)
-            {
-                double x = -A3.Value / A1.Value;
-                Transform_Lines(3,1, x);
-            }
-            // Преобразуем второй столбец третьей строки.
-            // Ищем число x, на которое будем домножать 2-ю строку и прибавлять её к 3-й строке.
-            // Преобразуем третью строку:
-            if (B3.Value != 0)
-            {
-                double x = -B3.Value / B2.Value;
-                Transform_Lines(3, 2, x);
-            }
-
-            // Вариант с двумя линейными уравнениями, когда а равны 0
-            if (A1.Value == 0 && A2.Value == 0 && A3.Value   == 0 && B3.Value == 0 && C3.Value == 0 && D3.Value == 0)
-            {
-                // Только в этом случае обнуляем b2:
-                // Ищем число x, на которое будем домножать 1-ю строку и прибавлять её к 2-й строке.
-                // Преобразуем вторую строку:
-                double x = -B2.Value / B1.Value;
-                Transform_Lines(2, 1, x);
-            }
-
-            // Исследуем систему линейных уравнений на совместность.
-            // Проверяем на строки вида ( 0...0 | d ), где d != 0.
-            for (int i = 1; i < 4; i++)
-            {
-                IsIncompatible(i);
-            }
-
-            // Исследуем систему линейных уравнений на совместность.
-            // Считаем строки:
-            for (int i = 1; i < 4; i++)
-            {
-                if (IsLineNull(i) == false)
-                {
-                    line_count++;
-                }
-            }
-
-
-            // Считаем переменные:
-            for (int i = 1; i < 4; i++)
-            {
-                if (IsColumnNull(i) == false)
-                {
-                    var_count++;
-                }
-            }
-
-            // Если переменных больше, чем строк, система либо несовместна, либо имеет бесконечно много решений
-            if (!flagIncompatible)
-            {
-                if (var_count > line_count)
-                {
-                    textBox_answer.Text = "строк: " + line_count + ", переменных: " + var_count + ". Система либо несовместна, либо имеет бесконечно много решений.";
-                    flagIncompatible = true;
-                }
-            }
-
-
-            // Если система совместна, начинаем вычисления.
-            if (!flagIncompatible)
-            {
-                // Если одно уравнение:
-                if (line_count == 1)
+                // Начинаем преобразования строк.
+                void Transform_Lines(int line_number1, int line_number2, double x)
                 {
                     foreach (var item in vars)
+                    {
+                        for (int i = 1; i < 5; i++)
+                            if (item.Line == line_number1 && item.Column == i)
+                            {
+                                foreach (var item1 in vars)
+                                {
+                                    if (item1.Line == line_number2 && item1.Column == i)
+                                    {
+                                        double tmp = item.Value + (item1.Value * x);
+                                        item.SetValue(tmp);
+                                    }
+                                }
+                            }
+                    }
+                }
+
+
+                // Начинаем с первого столбца второй строки. Здесь нужно получить 0.
+                // Ищем число x, на которое будем домножать 1-ю строку и прибавлять её ко 2-й строке.
+                // Преобразуем вторую строку:
+                if (A1.Value != 0 && A2.Value != 0)
+                {
+                    double x = -A2.Value / A1.Value;
+                    Transform_Lines(2, 1, x);
+                }
+                // Переходим к первому столбцу третьей строки.
+                if (A1.Value != 0 && A3.Value != 0)
+                {
+                    double x = -A3.Value / A1.Value;
+                    Transform_Lines(3, 1, x);
+                }
+                // Преобразуем второй столбец третьей строки.
+                // Ищем число x, на которое будем домножать 2-ю строку и прибавлять её к 3-й строке.
+                // Преобразуем третью строку:
+                if (B3.Value != 0)
+                {
+                    double x = -B3.Value / B2.Value;
+                    Transform_Lines(3, 2, x);
+                }
+
+                // Вариант с двумя линейными уравнениями, когда а равны 0
+                if (A1.Value == 0 && A2.Value == 0 && A3.Value == 0 && B3.Value == 0 && C3.Value == 0 && D3.Value == 0)
+                {
+                    // Только в этом случае обнуляем b2:
+                    // Ищем число x, на которое будем домножать 1-ю строку и прибавлять её к 2-й строке.
+                    // Преобразуем вторую строку:
+                    double x = -B2.Value / B1.Value;
+                    Transform_Lines(2, 1, x);
+                }
+
+                // Исследуем систему линейных уравнений на совместность.
+                // Проверяем на строки вида ( 0...0 | d ), где d != 0.
+                for (int i = 1; i < 4; i++)
+                {
+                    IsIncompatible(i);
+                }
+
+                // Исследуем систему линейных уравнений на совместность.
+                // Считаем строки:
+                for (int i = 1; i < 4; i++)
+                {
+                    if (IsLineNull(i) == false)
+                    {
+                        line_count++;
+                    }
+                }
+
+
+                // Считаем переменные:
+                for (int i = 1; i < 4; i++)
+                {
+                    if (IsColumnNull(i) == false)
+                    {
+                        var_count++;
+                    }
+                }
+
+
+                // Если переменных больше, чем строк, система либо несовместна, либо имеет бесконечно много решений
+                if (var_count > line_count)
+                {
+                    textBox_answer.Text += "строк: " + line_count + ", переменных: " + var_count + ". Система либо несовместна, либо имеет бесконечно много решений.";
+                    flagIncompatible = true;
+                    return;
+                }
+
+                if (flagIncompatible == false)
+                {
+                    // Если одно уравнение:
+                    if (line_count == 1)
                     {
                         if (A1.Value != 0)
                         {
@@ -360,49 +370,50 @@ namespace LinearEquationsVar
                             textBox_answer.Text += "c = " + c;
                         }
                     }
-                }
 
-                // Если 2 уравнения:
-                else if (line_count == 2)
-                {
-                    foreach (var item in vars)
+                    // Если 2 уравнения:
+                    else if (line_count == 2)
                     {
-                        textBox_answer.Text += "\n" + item.Name + " = " + item.Value;
+                        foreach (var item in vars)
+                        {
+                            textBox_answer.Text += "\n" + item.Name + " = " + item.Value;
+                        }
+                    }
+
+
+
+                    // Если 3 уравнения:
+                    else if (line_count == 3)
+                    {
+                        // Вычисляем c:
+                        if (C3.Value != 0)
+                        {
+                            c = D3.Value / C3.Value;
+                        }
+                        else
+                        {
+                            c = 0;
+                        }
+
+                        // Подставляем c во вторую строку и находим b:
+                        if (B2.Value != 0)
+                        {
+                            b = (D2.Value - (C2.Value * c)) / B2.Value;
+                        }
+
+
+                        // Подставляем b и c в первую строку и находим a:
+                        if (A1.Value != 0)
+                        {
+                            a = (D1.Value - B1.Value * b - C1.Value * c) / A1.Value;
+                        }
+
+
+                        // Возвращаем результат:
+                        textBox_answer.Text += "a = " + a + ", b = " + b + ", c = " + c;
                     }
                 }
-
-
-                
-                // Если 3 уравнения:
-                // Вычисляем c:
-                if (C3.Value != 0)
-                {
-                    c = D3.Value / C3.Value;
-                }
-                else
-                {
-                    c = 0;
-                }
-
-                // Подставляем c во вторую строку и находим b:
-                if (B2.Value != 0)
-                {
-                    b = (D2.Value - (C2.Value * c)) / B2.Value;
-                }
-                
-
-                // Подставляем b и c в первую строку и находим a:
-                if (A1.Value != 0)
-                {
-                    a = (D1.Value - B1.Value * b - C1.Value * c) / A1.Value;
-                }
-
-
-                // Возвращаем результат:
-                textBox_answer.Text += "a = " + a + ", b = " + b + ", c = " + c;
-            }
-            
+            }            
         }
-
     }
 }

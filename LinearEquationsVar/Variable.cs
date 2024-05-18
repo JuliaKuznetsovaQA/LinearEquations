@@ -39,6 +39,7 @@ namespace LinearEquationsVar
                     catch (Exception)
                     {
                         MessageBox.Show("Разрешен ввод только чисел");
+                        MainWindow.flagIncompatible = true;
                         return;
                     }
 
@@ -73,23 +74,15 @@ namespace LinearEquationsVar
 
                 else
                 {
-
-                    try
-                    {
-                        this.value = Convert.ToDouble(textBoxValue);
-                    }
-                    catch (Exception)
-                    {
-                        MessageBox.Show("Разрешен ввод только чисел");
-                        MainWindow.flagIncompatible = true;
-                        return;
-                    }
-
+                    this.value = Convert.ToDouble(textBoxValue);
+                    
                 }
 
             }
             get => this.value;
         }
+
+       
 
         public void SetValue(double value)
         {
