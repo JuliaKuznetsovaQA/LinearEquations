@@ -66,13 +66,16 @@ namespace LinearEquationsVar
                 textBox_a3, textBox_b3, textBox_c3, textBox_d3};
             foreach (var textBox in textBoxes)
             {
-                try
+                if (textBox.Text != "")
                 {
-                    Convert.ToDouble(textBox.Text);
-                }
-                catch (Exception)
-                {
-                    textBox_answer.Text = "Разрешен ввод только чисел";
+                    try
+                    {
+                        Convert.ToDouble(textBox.Text);
+                    }
+                    catch (Exception)
+                    {
+                        textBox_answer.Text = "Разрешен ввод только чисел";
+                    }
                 }
             }
 
@@ -128,14 +131,11 @@ namespace LinearEquationsVar
                 }
             }
 
-           
-
             for (int i = 1; i < 4; i++)
                 {
                     IsIncompatible(i);
                 }
 
-            
 
             // Проверка на нулевые строки
             bool IsLineNull(int line_number)
@@ -227,6 +227,46 @@ namespace LinearEquationsVar
                 else if (IsLineNull(2))
                 {
                     Change_Lines(2, 3);
+                }
+
+                // Считаем строки:
+                line_count = 0;
+                for (int i = 1; i < 4; i++)
+                {
+                    if (IsLineNull(i) == false)
+                    {
+                        line_count++;
+                    }
+                }
+
+                // Считаем переменные:
+                var_count = 0;
+                for (int i = 1; i < 4; i++)
+                {
+                    if (IsColumnNull(i) == false)
+                    {
+                        var_count++;
+                    }
+                }
+
+                // Если переменных больше, чем строк, система либо несовместна, либо имеет бесконечно много решений
+                if (var_count > line_count)
+                {
+                    textBox_answer.Text += "строк: " + line_count + ", переменных: " + var_count + ". Система либо несовместна, либо имеет бесконечно много решений.";
+                    flagIncompatible = true;
+                    return;
+                }
+
+
+                // Для случая, когда введено только c и d в одной строке.
+                if (line_count == 1)
+                {
+                    if (A1.Value == 0 && B1.Value == 0 && C1.Value != 0 && D1.Value != 0)
+                    {
+                        c = D1.Value / C1.Value;
+                        textBox_answer.Text += "c=" + c;
+                        return;
+                    }
                 }
 
                 // Если первый коэффициент в 1-й строке равен 0, ищем строку с ненулевым коэффициентом
@@ -322,6 +362,7 @@ namespace LinearEquationsVar
 
                 // Исследуем систему линейных уравнений на совместность.
                 // Считаем строки:
+                line_count = 0;
                 for (int i = 1; i < 4; i++)
                 {
                     if (IsLineNull(i) == false)
@@ -330,8 +371,8 @@ namespace LinearEquationsVar
                     }
                 }
 
-
                 // Считаем переменные:
+                var_count = 0;
                 for (int i = 1; i < 4; i++)
                 {
                     if (IsColumnNull(i) == false)
@@ -339,7 +380,6 @@ namespace LinearEquationsVar
                         var_count++;
                     }
                 }
-
 
                 // Если переменных больше, чем строк, система либо несовместна, либо имеет бесконечно много решений
                 if (var_count > line_count)
