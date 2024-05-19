@@ -25,7 +25,7 @@ namespace LinearEquationsVar
             InitializeComponent();
         }
 
-        static double a, b, c, x;
+        static double a, b, c;
 
         static int line_count = 0;
         static int var_count = 0;
@@ -104,7 +104,21 @@ namespace LinearEquationsVar
             Variable D3 = new Variable(textBox_d3.Text, "D3", 3, 4);
             vars[11] = D3;
 
-            
+
+            // (Нужно на этапе отладки, чтобы показать все значения системы в данный момент)
+            //TODO 
+            void ShowSystem()
+            {
+                foreach (var item in vars)
+                {
+                    textBox_answer.Text += "\n" + item.Name + "=" + item.Value;
+                }
+            }
+
+            // (Нужно на этапе отладки, чтобы показать все значения системы в данный момент)
+            //TODO
+            //textBox_answer.Text += "После ввода данных: \n";
+            //ShowSystem();
 
             // Проверка на строки вида ( 0...0 | d ), где d != 0.
             void IsIncompatible(int line_number)
@@ -196,6 +210,7 @@ namespace LinearEquationsVar
                 }
             }
 
+
             if (flagIncompatible == false)
             {
                 // Проверяем на нулевые строки
@@ -219,8 +234,8 @@ namespace LinearEquationsVar
                         {
                             textBox_answer.Text += "Система имеет бесконечное множество решений.";
                             flagIncompatible = true;
+                            return;
                         }
-
                     }
                 }
                 // Если 1-я строка ненулевая, а 2-я нулевая - поменяем местами 2-ю и 3-ю строки.
@@ -228,6 +243,11 @@ namespace LinearEquationsVar
                 {
                     Change_Lines(2, 3);
                 }
+
+                // (Нужно на этапе отладки, чтобы показать все значения системы в данный момент)
+                //TODO
+                //textBox_answer.Text += "Строки поменены местами: \n";
+                //ShowSystem();
 
                 // Считаем строки:
                 line_count = 0;
@@ -249,6 +269,10 @@ namespace LinearEquationsVar
                     }
                 }
 
+                // (Нужно на этапе отладки, чтобы показать все значения системы в данный момент)
+                //TODO
+                //textBox_answer.Text += "\n Строк: " + line_count + ", переменных: " + var_count + "\n";
+
                 // Если переменных больше, чем строк, система либо несовместна, либо имеет бесконечно много решений
                 if (var_count > line_count)
                 {
@@ -258,16 +282,6 @@ namespace LinearEquationsVar
                 }
 
 
-                // Для случая, когда введено только c и d в одной строке.
-                if (line_count == 1)
-                {
-                    if (A1.Value == 0 && B1.Value == 0 && C1.Value != 0 && D1.Value != 0)
-                    {
-                        c = D1.Value / C1.Value;
-                        textBox_answer.Text += "c=" + c;
-                        return;
-                    }
-                }
 
                 // Если первый коэффициент в 1-й строке равен 0, ищем строку с ненулевым коэффициентом
                 // и меняем их местами
@@ -298,6 +312,11 @@ namespace LinearEquationsVar
                         }
                     }
                 }
+
+                // (Нужно на этапе отладки, чтобы показать все значения системы в данный момент)
+                //TODO
+                //textBox_answer.Text += "До преобразований строк: \n";
+                //ShowSystem();
 
                 // Начинаем преобразования строк.
                 void Transform_Lines(int line_number1, int line_number2, double x)
@@ -337,14 +356,14 @@ namespace LinearEquationsVar
                 // Преобразуем второй столбец третьей строки.
                 // Ищем число x, на которое будем домножать 2-ю строку и прибавлять её к 3-й строке.
                 // Преобразуем третью строку:
-                if (B3.Value != 0)
+                if (B3.Value != 0 && B2.Value != 0)
                 {
                     double x = -B3.Value / B2.Value;
                     Transform_Lines(3, 2, x);
                 }
 
                 // Вариант с двумя линейными уравнениями, когда а равны 0
-                if (A1.Value == 0 && A2.Value == 0 && A3.Value == 0 && B3.Value == 0 && C3.Value == 0 && D3.Value == 0)
+                if (A1.Value == 0 && A2.Value == 0 && A3.Value == 0 && B3.Value == 0 && C3.Value == 0 && D3.Value == 0 && B2.Value != 0 && B1.Value != 0)
                 {
                     // Только в этом случае обнуляем b2:
                     // Ищем число x, на которое будем домножать 1-ю строку и прибавлять её к 2-й строке.
@@ -352,6 +371,11 @@ namespace LinearEquationsVar
                     double x = -B2.Value / B1.Value;
                     Transform_Lines(2, 1, x);
                 }
+
+                // (Нужно на этапе отладки, чтобы показать все значения системы в данный момент)
+                //TODO
+                //textBox_answer.Text += "После преобразований строк: \n";
+                //ShowSystem();
 
                 // Исследуем систему линейных уравнений на совместность.
                 // Проверяем на строки вида ( 0...0 | d ), где d != 0.
@@ -380,6 +404,11 @@ namespace LinearEquationsVar
                         var_count++;
                     }
                 }
+
+                // (Нужно на этапе отладки, чтобы показать все значения системы в данный момент)
+                //TODO
+                //ShowSystem();
+                //textBox_answer.Text += "\n Строк: " + line_count + ", переменных: " + var_count + "\n (До вычисления результата)\n";
 
                 // Если переменных больше, чем строк, система либо несовместна, либо имеет бесконечно много решений
                 if (var_count > line_count)
