@@ -19,7 +19,7 @@ namespace LinearEquationsVar
     /// Логика взаимодействия для MainWindow.xaml
     /// </summary>
     public partial class MainWindow : Window
-    {
+    { 
         public MainWindow()
         {
             InitializeComponent();
@@ -32,7 +32,7 @@ namespace LinearEquationsVar
         public static bool flagIncompatible = false;
 
 
-        
+
 
         // Очистка формы.
         private void clean_Click(object sender, RoutedEventArgs e)
@@ -46,7 +46,7 @@ namespace LinearEquationsVar
             {
                 textBox.Text = "";
             }
-            
+
             var_count = 0;
             line_count = 0;
             a = 0;
@@ -55,7 +55,7 @@ namespace LinearEquationsVar
             flagIncompatible = false;
         }
 
-       
+
         public void enter_Click(object sender, RoutedEventArgs e)
         {
             Variable[] vars = new Variable[12];
@@ -145,9 +145,9 @@ namespace LinearEquationsVar
             }
 
             for (int i = 1; i < 4; i++)
-                {
-                    IsIncompatible(i);
-                }
+            {
+                IsIncompatible(i);
+            }
 
 
             // Проверка на нулевые строки
@@ -185,10 +185,10 @@ namespace LinearEquationsVar
                 }
                 else { return false; }
             }
-            
-            
+
+
             // Функция меняет строки значениями
-            void Change_Lines(int line_number1, int line_number2) 
+            void ChangeLines(int line_number1, int line_number2)
             {
                 double tmp;
                 foreach (var item in vars)
@@ -218,7 +218,7 @@ namespace LinearEquationsVar
                     // Если 1-я строка нулевая, а 3-я нет - меняем строки местами.
                     if (IsLineNull(3) == false)
                     {
-                        Change_Lines(1, 3);
+                        ChangeLines(1, 3);
                     }
                     // Если и 1-я и 3-я строки нулевые, проверяем 2-ю строку.
                     else if (IsLineNull(3))
@@ -226,7 +226,7 @@ namespace LinearEquationsVar
                         // Если 2-я строка ненулевая, меняем местами 1-ю и 2-ю строки.
                         if (IsLineNull(2) == false)
                         {
-                            Change_Lines(1, 2);
+                            ChangeLines(1, 2);
                         }
                         // Если все 3 строки нулевые, система имеет бесконечное множество решений.
                         else if (IsLineNull(2))
@@ -240,7 +240,7 @@ namespace LinearEquationsVar
                 // Если 1-я строка ненулевая, а 2-я нулевая - поменяем местами 2-ю и 3-ю строки.
                 else if (IsLineNull(2))
                 {
-                    Change_Lines(2, 3);
+                    ChangeLines(2, 3);
                 }
 
 
@@ -288,11 +288,11 @@ namespace LinearEquationsVar
                 {
                     if (A2.Value != 0)
                     {
-                        Change_Lines(1, 2);
+                        ChangeLines(1, 2);
                     }
                     else if (A3.Value != 0)
                     {
-                        Change_Lines(1, 3);
+                        ChangeLines(1, 3);
                     }
                     // Если все первые коэффициенты нулевые, переходим к анализу вторых коэффициентов.
                     else if (A1.Value == 0 && A2.Value == 0 && A3.Value == 0 && B1.Value == 0)
@@ -301,13 +301,13 @@ namespace LinearEquationsVar
                         // меняем 1-ю и 2-ю строку
                         if (B2.Value != 0)
                         {
-                            Change_Lines(1, 2);
+                            ChangeLines(1, 2);
                         }
                         // Если в первых двух строках первые 2 коэффициента нулевые, а в 3-й строке 
                         // второй коэффициент ненулевой, меняем местами 1-ю и 3-ю строки
                         else if (B3.Value != 0)
                         {
-                            Change_Lines(1, 3);
+                            ChangeLines(1, 3);
                         }
                     }
                 }
@@ -318,7 +318,7 @@ namespace LinearEquationsVar
                 //ShowSystem();
 
                 // Начинаем преобразования строк.
-                void Transform_Lines(int line_number1, int line_number2, double x)
+                void TransformLines(int line_number1, int line_number2, double x)
                 {
                     foreach (var item in vars)
                     {
@@ -344,13 +344,13 @@ namespace LinearEquationsVar
                 if (A1.Value != 0 && A2.Value != 0)
                 {
                     double x = -A2.Value / A1.Value;
-                    Transform_Lines(2, 1, x);
+                    TransformLines(2, 1, x);
                 }
                 // Переходим к первому столбцу третьей строки.
                 if (A1.Value != 0 && A3.Value != 0)
                 {
                     double x = -A3.Value / A1.Value;
-                    Transform_Lines(3, 1, x);
+                    TransformLines(3, 1, x);
                 }
                 // Преобразуем второй столбец третьей строки.
                 // Ищем число x, на которое будем домножать 2-ю строку и прибавлять её к 3-й строке.
@@ -358,7 +358,7 @@ namespace LinearEquationsVar
                 if (B3.Value != 0 && B2.Value != 0)
                 {
                     double x = -B3.Value / B2.Value;
-                    Transform_Lines(3, 2, x);
+                    TransformLines(3, 2, x);
                 }
 
                 // Вариант с двумя линейными уравнениями, когда а равны 0
@@ -368,7 +368,7 @@ namespace LinearEquationsVar
                     // Ищем число x, на которое будем домножать 1-ю строку и прибавлять её к 2-й строке.
                     // Преобразуем вторую строку:
                     double x = -B2.Value / B1.Value;
-                    Transform_Lines(2, 1, x);
+                    TransformLines(2, 1, x);
                 }
 
 
@@ -481,7 +481,7 @@ namespace LinearEquationsVar
                         textBox_answer.Text += "a = " + a + ", b = " + b + ", c = " + c;
                     }
                 }
-            }            
+            }
         }
     }
 }

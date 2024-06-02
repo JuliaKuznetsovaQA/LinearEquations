@@ -28,7 +28,7 @@ namespace LinearEquationsVar
                 {
                     this.value = 0;
                 }
-                
+
                 else
                 {
 
@@ -50,7 +50,7 @@ namespace LinearEquationsVar
         }
 
         public string Name { get { return name; } }
-                       
+
         public int Line
         {
             set => this.line = value;
@@ -75,14 +75,14 @@ namespace LinearEquationsVar
                 else
                 {
                     this.value = Convert.ToDouble(textBoxValue);
-                    
+
                 }
 
             }
             get => this.value;
         }
 
-       
+
 
         public void SetValue(double value)
         {
