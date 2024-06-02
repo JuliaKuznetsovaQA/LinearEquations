@@ -64,6 +64,8 @@ namespace LinearEquationsVar
                 textBox_a1, textBox_b1, textBox_c1, textBox_d1,
                 textBox_a2, textBox_b2, textBox_c2, textBox_d2,
                 textBox_a3, textBox_b3, textBox_c3, textBox_d3};
+
+            // проверка данных, вводимых пользователем, на валидность
             foreach (var textBox in textBoxes)
             {
                 if (textBox.Text != "")
@@ -79,6 +81,7 @@ namespace LinearEquationsVar
                 }
             }
 
+            // ввод данных
             Variable A1 = new Variable(textBox_a1.Text, "A1", 1, 1);
             vars[0] = A1;
             Variable B1 = new Variable(textBox_b1.Text, "B1", 1, 2);
@@ -104,20 +107,6 @@ namespace LinearEquationsVar
             Variable D3 = new Variable(textBox_d3.Text, "D3", 3, 4);
             vars[11] = D3;
 
-
-            // (Нужно на этапе отладки, чтобы показать все значения системы в данный момент)
-            //TODO 
-            void ShowSystem()
-            {
-                foreach (var item in vars)
-                {
-                    textBox_answer.Text += "\n" + item.Name + "=" + item.Value;
-                }
-            }
-
-            //TODO Убрать после отладки
-            //textBox_answer.Text += "После ввода данных: \n";
-            //ShowSystem();
 
             // Проверка на строки вида ( 0...0 | d ), где d != 0.
             void IsIncompatible(int line_number)
@@ -244,10 +233,6 @@ namespace LinearEquationsVar
                 }
 
 
-                //TODO Убрать после отладки
-                //textBox_answer.Text += "Строки поменены местами: \n";
-                //ShowSystem();
-
                 // Считаем строки:
                 line_count = 0;
                 for (int i = 1; i < 4; i++)
@@ -269,9 +254,6 @@ namespace LinearEquationsVar
                 }
 
 
-                //TODO Убрать после отладки
-                //textBox_answer.Text += "\n Строк: " + line_count + ", переменных: " + var_count + "\n";
-
                 // Если переменных больше, чем строк, система либо несовместна, либо имеет бесконечно много решений
                 if (var_count > line_count)
                 {
@@ -279,7 +261,6 @@ namespace LinearEquationsVar
                     flagIncompatible = true;
                     return;
                 }
-
 
 
                 // Если первый коэффициент в 1-й строке равен 0, ищем строку с ненулевым коэффициентом
@@ -312,10 +293,6 @@ namespace LinearEquationsVar
                     }
                 }
 
-
-                //TODO Убрать после отладки
-                //textBox_answer.Text += "До преобразований строк: \n";
-                //ShowSystem();
 
                 // Начинаем преобразования строк.
                 void TransformLines(int line_number1, int line_number2, double x)
@@ -372,10 +349,6 @@ namespace LinearEquationsVar
                 }
 
 
-                //TODO Убрать после отладки
-                //textBox_answer.Text += "После преобразований строк: \n";
-                //ShowSystem();
-
                 // Исследуем систему линейных уравнений на совместность.
                 // Проверяем на строки вида ( 0...0 | d ), где d != 0.
                 for (int i = 1; i < 4; i++)
@@ -404,10 +377,6 @@ namespace LinearEquationsVar
                     }
                 }
 
-
-                //TODO Убрать после отладки
-                //ShowSystem();
-                //textBox_answer.Text += "\n Строк: " + line_count + ", переменных: " + var_count + "\n (До вычисления результата)\n";
 
                 // Если переменных больше, чем строк, система либо несовместна, либо имеет бесконечно много решений
                 if (var_count > line_count)
